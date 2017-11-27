@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="styleForPiano.css" type="text/css">
+    <meta charset="UTF-8">
+    <title> Piano </title>
+
+</head>
+<body>
+<script>
+class Music {
+    constructor(arrMusic){
+        this.arrMusic = arrMusic;
+    }
+}
+
+class View {
+    createSectionAndButtons(music) {
+        $('body').append('<section></section>');
+        $('section').append ('<div class="divForP"> <span class="spanFon">фон</span>  <span class="spanFon">фон</span> <span class="spanFon">фон</span> </div>');
+        for (var key in music) {
+            for (var i = 0; i < music[key].length; i++) {
+                $('section').append('<div id="' + i + '" class="divButton">' + '<p class="pBlackButton"></p></div>');
+            }
+        }
+        $('div.divButton').on('click', controller.ClickButton.bind(controller));
+
+    }
+}
+
+class PlaySong{
+    play(id, music){
+        this[id] = new Audio();
+        for (var key in music){
+            this[id].src = music[key][id];
+        }
+        this[id].play();
+        $('div#' + id).css('background', 'lightgrey');
+        console.log($('div#' + id));
+    }
+    pausa(id){
+        this[id].pause();
+        delete  this[id];
+        $('div#' + id).removeAttr('style');
+    }
+}
+
+class Controller {
+    constructor (music){
+        this.music = music;
+        this.saveId = [];
+    }
+    start(){
+        var view = new  View ();
+        view.createSectionAndButtons(this.music);
+    }
+   ClickButton (){
+           var id = event.target.id;
+           if(typeof this.id !== 'undefined'){
+               var was = true;
+               if(this.saveId.length !== 0){
+                   for (var x =0; x < this.saveId.length; x++){
+                           if(this.saveId[x] === id){
+                                  playSong.pausa(this.saveId[x]);
+                                   var was = false;
+                                   this.saveId.splice(x, 1);
+                              if(this.saveId.length === 0){
+                                   this.id = undefined;
+                               }
+                               break;
+                           }
+                   }
+                   if(was === true /*&& id > arrMusic.length/2 -1 */){
+                       this.id = id;
+                       playSong.play(this.id, this.music);
+                       this.saveId.push(this.id);
+                   }
+               }
+           }
+            else if (typeof this.id === 'undefined') {
+                this.id = id;
+                playSong.play( this.id , this.music);
+                this.saveId.push(this.id);
+            }
+    }
+}
+
+var arrMusic = ['music/vstavka1.mp3', 'music/vstavka2.mp3', 'music/vstavka3.mp3', 'music/baraban1.mp3', 'music/baraban2.mp3','music/baraban3.mp3'];
+var music = new Music(arrMusic);
+//var view = new  View ();
+var playSong = new PlaySong();
+var controller = new Controller( music);
+controller.start();
+
+
+
+</script>
+</body>
+</html>
